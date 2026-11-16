@@ -128,7 +128,8 @@ section Problem7
 
 theorem problem7 (S : Set ℝ) (hne : S.Nonempty) (hbdd : BddBelow S) :
     sInf S = -sSup {x | -x ∈ S} := by
-  simp only [Real.sInf_eq_neg_sSup_neg S]
+  rw [Real.sInf_def]
+  rfl
 
 end Problem7
 
@@ -358,6 +359,7 @@ end Problem18
 
 section Problem19
 
+open Classical in
 noncomputable def f19 (x : ℝ) : ℝ :=
   if ∃ q : ℚ, (q : ℝ) = x then x else 0
 
@@ -368,7 +370,7 @@ theorem problem19a : Filter.Tendsto f19 (nhdsWithin 0 {(0 : ℝ)}ᶜ) (nhds 0) :
   simp only [f19]
   split_ifs with h
   · simpa [Real.dist_eq] using hxd
-  · simp [dist_self]
+  · simpa [dist_self] using hε
 
 theorem problem19b (c : ℝ) (hc : c ≠ 0) :
     ¬ ∃ l, Filter.Tendsto f19 (nhdsWithin c {c}ᶜ) (nhds l) := by
@@ -395,7 +397,7 @@ theorem problem20 {A : Set ℝ} {c : ℝ} {f g : ℝ → ℝ}
   have hxδ₁ : dist x c < δ₁ := lt_of_lt_of_le hxd (min_le_left _ _)
   have hxδ₂ : dist x c < δ₂ := lt_of_lt_of_le hxd (min_le_right _ _)
   have hfx : |f x| ≤ M := hfM x hxA hxδ₁
-  have hgx : dist (g x) 0 < ε / M := hg x hxA hxδ₂
+  have hgx : dist (g x) 0 < ε / M := hg hxA hxδ₂
   rw [Real.dist_eq, sub_zero] at hgx
   rw [Real.dist_eq, sub_zero]
   calc |f x * g x| = |f x| * |g x| := abs_mul _ _
@@ -584,3 +586,39 @@ theorem problem24
   simpa [fAdd, fLin, smul_eq_mul, mul_comm, mul_left_comm, mul_assoc] using hx
 
 end Problem24
+
+-- ============================================================================
+-- Problem 25
+-- If (Xₙ) and (Yₙ) are Cauchy, then Xₙ + Yₙ and Xₙ · Yₙ are Cauchy.
+-- ============================================================================
+
+section Problem25
+
+/- Paper proof (notes):
+  Xn cauchy implies that there exists N1 such that for all m, n >= N1, |Xm - Xn| < ε/2
+  Yn cauchy implies that there exists N2 such that for all m, n >= N2, |Ym - Yn| < ε/2
+  let N = max N1 N2
+  then for all m, n >= N, |Xm - Xn| < ε/2 and |Ym - Yn| < ε/2
+  then |(Xm + Ym) - (Xn + Yn)| = |(Xm - Xn) + (Ym - Yn)| <= |Xm - Xn| + |Ym - Yn| < ε/2 + ε/2 = ε
+  so Xn + Yn is cauchy
+  similarly,|Xm * Ym - Xn * Yn| = |Xm * Ym - Xn * Ym + Xn * Ym - Xn * Yn|
+  = |Xm * (Ym - Yn) + Yn * (Xm - Xn)| <= |Xm| * |Ym - Yn| + |Yn| * |Xm - Xn|
+  < (M1 + M2) * ε/2 + (M1 + M2) * ε/2 = (M1 + M2) * ε
+  so Xn * Yn is cauchy
+  hence, CauchySeq (X + Y) ∧ CauchySeq (X * Y)
+-/
+
+/-- If `Xₙ` and `Yₙ` are Cauchy, then so are `Xₙ + Yₙ` and `Xₙ * Yₙ`. -/
+theorem problem25 {X Y : ℕ → ℝ} (hX : CauchySeq X) (hY : CauchySeq Y) :
+    CauchySeq (X + Y) ∧ CauchySeq (X * Y) := by
+  -- in ℝ, Cauchy ⇔ convergent; limits of sums and products exist
+  obtain ⟨a, ha⟩ := cauchySeq_tendsto_of_complete hX
+  obtain ⟨b, hb⟩ := cauchySeq_tendsto_of_complete hY
+  exact ⟨hX.add hY, (ha.mul hb).cauchySeq⟩
+
+end Problem25
+
+-- ============================================================================
+-- Problem 26 (to do)
+-- If Xₙ = √n, then lim |Xₙ₊₁ - Xₙ| = 0 but (Xₙ) is not Cauchy.
+-- ============================================================================

@@ -12,9 +12,19 @@ Parallel **LaTeX** notes (informal write-ups of the same material) live on Overl
 
 ## What’s in here
 
-Most of the work is in **`math444_hw.lean`**: a long single file with many small problems, each in its own `section`, with comments pointing at textbook-style section numbers (§1.2, §2.1, …) so I can match them to the book while I practice.
+```
+LeanRealanalysis/
+├── RealAnalysis/
+│   ├── Math444.lean        MATH 444 real-analysis homework (one section per problem)
+│   └── README.md           status + why some problems are still `sorry`
+└── ComplexAnalysis/
+    ├── HW1.lean … HW6.lean complex-analysis Homeworks 1–6 (Ahlfors)
+    └── README.md           status + why some problems are still `sorry`
+LeanRealanalysis.lean       imports everything, so `lake build` checks it all
+```
 
-The **`LeanRealanalysis`** package is the Lake scaffold (`LeanRealanalysis/` + `LeanRealanalysis.lean`); the interesting content is the analysis proofs, not the stub module.
+Each problem is its own `section`, with comments giving the textbook reference. The README in
+each folder lists which problems are still `sorry` and why.
 
 ## Requirements
 
@@ -34,6 +44,6 @@ The first full build can take a while while Mathlib compiles.
 
 ## Hacking on it
 
-Open the folder in the editor, edit `math444_hw.lean`, and use the **Infoview** for goals and errors. If the language server acts up after `lake update`, restart it from the Lean extension’s command palette.
+Open the folder in the editor, edit the files under `LeanRealanalysis/`, and use the **Infoview** for goals and errors. If the language server acts up after `lake update`, restart it from the Lean extension’s command palette.
 
 `.lake/` holds dependencies and build output and is gitignored.
